@@ -83,13 +83,20 @@ async function createPrismServerWithLogger(options: CreateBaseServerOptions, log
   };
 
   const config: IHttpConfig = isProxyServerOptions(options)
-    ? { ...shared, mock: false, upstream: options.upstream, errors: options.errors, upstreamProxy: options.upstreamProxy }
+    ? {
+        ...shared,
+        mock: false,
+        upstream: options.upstream,
+        errors: options.errors,
+        upstreamProxy: options.upstreamProxy,
+      }
     : { ...shared, mock: { dynamic: options.dynamic }, errors: options.errors };
 
   const server = createHttpServer(operations, {
     cors: options.cors,
     config,
     components: { logger: logInstance.child({ name: 'HTTP SERVER' }) },
+    responseDelay: options.responseDelay,
   });
 
   const address = await server.listen(options.port, options.host);
@@ -138,6 +145,7 @@ type CreateBaseServerOptions = {
   document: string;
   multiprocess: boolean;
   errors: boolean;
+  responseDelay: number;
 };
 
 export interface CreateProxyServerOptions extends CreateBaseServerOptions {

@@ -55,7 +55,7 @@ function parseRequestBody(request: IncomingMessage) {
 }
 
 export const createServer = (operations: IHttpOperation[], opts: IPrismHttpServerOpts): IPrismHttpServer => {
-  const { components, config } = opts;
+  const { components, config, responseDelay } = opts;
 
   const handler: MicriHandler = async (request, reply) => {
     const { url, method, headers } = request;
@@ -131,11 +131,18 @@ export const createServer = (operations: IHttpOperation[], opts: IPrismHttpServe
           E.tryCatch(() => {
             if (output.headers) Object.entries(output.headers).forEach(([name, value]) => reply.setHeader(name, value));
 
-            send(
-              reply,
-              output.statusCode,
-              serialize(output.body, reply.getHeader('content-type') as string | undefined)
-            );
+            const sendResponse = () =>
+              send(
+                reply,
+                output.statusCode,
+                serialize(output.body, reply.getHeader('content-type') as string | undefined)
+              );
+
+            if (responseDelay > 0) {
+              components.logger.info({ name: 'HTTP SERVER' }, `Response will be delayed by ${responseDelay}ms`);
+            }
+
+            setTimeout(sendResponse, responseDelay);
           }, E.toError)
         );
       }),

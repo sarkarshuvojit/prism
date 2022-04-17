@@ -50,7 +50,7 @@ In such a case, Prism will keep serving operations loaded with the previous rest
 
 ### Modifying Responses
 
-Prism's behavior in looking for the response for your request can be modified with a series of parameters that you can either pass through the `Prefer` header or through a query string parameter. 
+Prism's behavior in looking for the response for your request can be modified with a series of parameters that you can either pass through the `Prefer` header or through a query string parameter.
 
 Keep in mind, all the query parameters need to be prefixed with `__` — so if the Prefer header parameter is `code`, the query string will be `__code`
 
@@ -126,7 +126,7 @@ You can see there's a `sl-violations` header which is a JSON object with all the
 
 ### Returning Errors
 
-The header is a handy way to see contract mismatches or incorrect usage in a way that doesn't block the client, so you can monitor all/some production traffic this way record the problems. Omit the optional `--errors` flag to log validation errors without returning errors. In this case, the request flows to the actual API and returns what it returns. 
+The header is a handy way to see contract mismatches or incorrect usage in a way that doesn't block the client, so you can monitor all/some production traffic this way record the problems. Omit the optional `--errors` flag to log validation errors without returning errors. In this case, the request flows to the actual API and returns what it returns.
 
 If you want Prism to make violations considerably more clear, run the proxy command with the `--errors` flag. This will turn any request or response violation into a [RFC 7807 HTTP Problem Details Error](https://tools.ietf.org/html/rfc7807) just like validation errors on the mock server.
 
@@ -158,6 +158,7 @@ curl -v -X POST http://localhost:4010/pet/ -d '{"name"": "Skip", "species": 100}
 < HTTP/1.1 422 Unprocessable Entity
 {"statusCode": 400, "message": "Pet 'species' field should be a string, got integer", "code": "PET-ERROR-400"}
 ```
+
 ## Running in Production
 
 When running in development mode (which happens when the `NODE_ENV` environment variable is not set to `production`) or the `-m` flag is set to false, both the HTTP Server and the CLI (which is responsible of parsing and showing the received logs on the screen) will run within the same process.
@@ -167,6 +168,10 @@ Processing logs slows down Prism significantly. If you're planning to use the CL
 ## Running behind a proxy
 
 Your environment may need you to route your upstream requests through a proxy server. In this case append the `--upstream-proxy http://proxy.example.com:3128` option to the command for Prism to use it.
+
+## Constant delay in response
+
+To add a constant delay to all responses from a mock server use the `--responseDelay` or `-r` and pass a value in miliseconds to delay each response by that amount.
 
 <!-- theme: info -->
 

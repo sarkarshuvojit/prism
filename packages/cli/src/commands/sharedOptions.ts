@@ -37,6 +37,12 @@ const sharedOptions: Dictionary<Options> = {
     boolean: true,
     default: false,
   },
+
+  responseDelay: {
+    alias: 'r',
+    description: 'Adds a delay in miliseconds to every response.',
+    default: 0,
+  },
 };
 
 export default sharedOptions;
